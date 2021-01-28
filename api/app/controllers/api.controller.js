@@ -1,5 +1,6 @@
 const User = require('../models/user')
 const Company = require('../models/company')
+const Bug = require('../models/bug')
 
 //initialize aws
 require('dotenv').config()
@@ -14,7 +15,107 @@ const s3 = new AWS.S3({
         Bucket: BUCKET_NAME
     }
 });
+
 //hacker
+exports.leaderboard = (req, res) => {
+    User.aggregate([
+        { $project: { username: 1, reputation: 1, profileImage: 1 } },
+        { $sort: { reputation: -1 } },
+        { $limit: 10 }
+    ]).exec((err, data) => {
+        if (err) {
+            return res.status(500).send({ message: err })
+        }
+        res.status(200).send(JSON.stringify(data))
+    })
+}
+
+exports.userfromid = (req, res) => {
+    const looprom = new Promise((resolve, reject) => {
+        let data = []
+        for (let i in req.body.uids) {
+            if (req.body.uids[i].length != 24) {
+                reject('invalid data')
+                return
+            }
+            User.findById(req.body.uids[i]).exec((err, user) => {
+                if (err) {
+                    reject(err)
+                    return
+                }
+                if (!user) {
+                    reject('user not found')
+                    return
+                }
+                data.push({
+                    username: user.username,
+                    profileImage: user.profileImage || null
+                })
+                if (data.length == req.body.uids.length) {
+                    resolve(data)
+                }
+            })
+        }
+    })
+    looprom.then(data => {
+        return res.status(200).send(JSON.stringify(data))
+    }).catch(err => {
+        return res.status(500).send({ message: err })
+    })
+}
+
+exports.getusersofcompany = (req, res) => {
+    let uids = []
+    Company.findOne({ cusername: req.body.cusername }).exec((err, _company) => {
+        if (err) {
+            return res.status(500).send({ message: err })
+        }
+        if (!_company) {
+            return res.status(500).send({ message: 'company does not exist' })
+        }
+        uids = _company.members
+        const looprom = new Promise((resolve, reject) => {
+            let data = []
+            for (let i in uids) {
+                User.findById(uids[i]).exec((_err, user) => {
+                    if (_err) {
+                        reject(_err)
+                        return
+                    }
+                    if (!user) {
+                        reject('user not found')
+                        return
+                    }
+                    data.push({
+                        username: user.username,
+                        name: user.name || null,
+                        profileImage: user.profileImage || null
+                    })
+                    if (data.length == uids.length) {
+                        resolve(data)
+                    }
+                })
+            }
+        })
+        looprom.then(data => {
+            return res.status(200).send(JSON.stringify(data))
+        }).catch(_err => {
+            return res.status(500).send({ message: _err })
+        })
+    })
+}
+
+exports.gethackerdata = (req, res) => {
+    User.findOne({ username: req.body.username }, 'username name profileImage reputation isInACompany website').exec((err, user) => {
+        if (err) {
+            return res.status(500).send({ message: err })
+        }
+        if (!user) {
+            return res.status(500).send({ message: 'user does not exist' })
+        }
+        return res.status(200).send(JSON.stringify(user))
+    })
+}
 
 exports.findone = (req, res) => {
     // return user's own details
@@ -84,6 +185,75 @@ exports.changeprofilepic = (req, res) => {
     })
 }
 
+exports.hacktivity = (req, res) => {
+    let sorttype = req.query.sorttype
+    /*
+    a2z => a to z
+    z2a => z to a
+    lthb => lowest to highest minimum bounty
+    htlb => highest to lowest minimum bounty
+    */
+    let fields = 'cusername cname bountyVals description companyProfileImage'
+    if (sorttype == 'a2z') {
+        Company.find({}, fields, { sort: { cusername: 1 } }, (err, companies) => {
+            if (err) {
+                return res.status(500).send({ message: err })
+            }
+            res.status(200).send(JSON.stringify(companies))
+        })
+    } else if (sorttype == 'z2a') {
+        Company.find({}, fields, { sort: { cusername: -1 } }, (err, companies) => {
+            if (err) {
+                return res.status(500).send({ message: err })
+            }
+            res.status(200).send(JSON.stringify(companies))
+        })
+    } else if (sorttype == 'lthb') {
+        Company.find({}, fields, { sort: { 'bountyVals.low': 1 } }, (err, companies) => {
+            if (err) {
+                return res.status(500).send({ message: err })
+            }
+            res.status(200).send(JSON.stringify(companies))
+        })
+    } else if (sorttype == 'htlb') {
+        Company.find({}, fields, { sort: { 'bountyVals.low': -1 } }, (err, companies) => {
+            if (err) {
+                return res.status(500).send({ message: err })
+            }
+            res.status(200).send(JSON.stringify(companies))
+        })
+    } else {
+        Company.find({}, fields, { sort: { cusername: 1 } }, (err, companies) => {
+            if (err) {
+                return res.status(500).send({ message: err })
+            }
+            res.status(200).send(JSON.stringify(companies))
+        })
+    }
+}
+
+exports.singlehacktivity = (req, res) => {
+    Company.findOne({ cusername: req.body.cusername }).exec((err, company) => {
+        if (err) {
+            return res.status(500).send({ message: err })
+        }
+        if (!company) {
+            return res.status(500).send({ message: 'Not found' })
+        }
+        let tosend = {
+            cid: company._id,
+            cname: company.cname || null,
+            cusername: company.cusername || null,
+            members: company.members || null,
+            inScopeWebsites: company.inScopeWebsites || null,
+            outOfScopeWebsites: company.outOfScopeWebsites || null,
+            bountyVals: company.bountyVals || null,
+            description: company.description || null,
+            companyProfileImage: company.companyProfileImage || null
+        }
+        return res.status(200).send(JSON.stringify(tosend))
+    })
+}
 //company
 
 exports.createcompany = (req, res) => {
