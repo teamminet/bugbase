@@ -1,12 +1,20 @@
 const User = require('../models/user')
 const Company = require('../models/company')
 const Bug = require('../models/bug')
+const nodemailer = require('nodemailer')
+const pdfMake = require('pdfmake/build/pdfmake')
+const pdfFonts = require('pdfmake/build/vfs_fonts')
+
+pdfMake.vfs = pdfFonts.pdfMake.vfs;
+
 
 //initialize aws
 require('dotenv').config()
 var AWS = require('aws-sdk');
 const AWSID = process.env.AWSACCESSKEYID;
 const AWSSECRET = process.env.AWSSECRETKEY;
+const nodeMailerUser = process.env.EMAIL;
+const nodeMailerPass = process.env.PASS;
 const BUCKET_NAME = 'bugbaseprofilepics';
 const s3 = new AWS.S3({
     accessKeyId: AWSID,
@@ -15,7 +23,17 @@ const s3 = new AWS.S3({
         Bucket: BUCKET_NAME
     }
 });
-
+//nodemailer options
+const transporter = nodemailer.createTransport({
+    host: "smtp.zoho.in",
+    secure: true,
+    port: 465,
+    RequireAuthentication: 'Yes',
+    auth: {
+        user: nodeMailerUser,
+        pass: nodeMailerPass,
+    },
+});
 //hacker
 exports.leaderboard = (req, res) => {
     User.aggregate([
@@ -254,6 +272,89 @@ exports.singlehacktivity = (req, res) => {
         return res.status(200).send(JSON.stringify(tosend))
     })
 }
+exports.createbug = async (req, res) => {
+    const bug = new Bug({
+        uid: req.userId,
+        cid: req.body.cid,
+        chatdata: [
+            {
+                person: 0,
+                bugdata: req.body.data
+            }
+        ]
+    })
+    await User.findById(req.userId).exec((err, user) => {
+        if (err) {
+            return res.status(500).send({ message: err })
+        }
+        user.submittedBugs.push(bug._id)
+        user.save()
+    })
+    await Company.findById(req.body.cid).exec((err, company) => {
+        if (err) {
+            return res.status(500).send({ message: err })
+        }
+        company.receivedBugs.push(bug._id)
+        company.save()
+    })
+    bug.save((err, bug) => {
+        if (err) {
+            return res.status(500).send({ message: err })
+        }
+        return res.status(200).send(bug)
+    })
+}
+exports.getmessages = (req, res) => {
+    if (req.body.bid.length != 24) {
+        return res.status(500).send({ message: "Invalid data." })
+    }
+    Bug.findOne({ _id: req.body.bid, uid: req.userId }).exec((err, bug) => {
+        if (err) {
+            return res.status(500).send({ message: err })
+        }
+        if (!bug) {
+            return res.status(500).send({ message: 'Not Found' })
+        }
+        return res.status(200).send(bug)
+    })
+}
+exports.sendmessage = (req, res) => {
+    if (req.body.bid.length != 24) {
+        return res.status(500).send({ message: "Invalid data." })
+    }
+    Bug.findOne({ _id: req.body.bid, uid: req.userId }).exec((err, bug) => {
+        if (err) {
+            return res.status(500).send({ message: err })
+        }
+        if (!bug) {
+            return res.status(500).send({ message: 'Not Found' })
+        }
+        bug.chatdata.push({
+            person: 0,
+            bugdata: req.body.message,
+            timestamp: new Date()
+        })
+
+        bug.save((err, bug) => {
+            if (err) {
+                return res.status(500).send({ message: err })
+            }
+            return res.status(200).send(JSON.stringify(bug))
+        })
+    })
+}
+exports.getReportsViaUser = (req, res) => {
+    Bug.find({ uid: req.userId }).exec((err, data) => {
+        if (err) {
+            return res.status(500).send({ message: err })
+        }
+        if (!data) {
+            return res.status(500).send({ message: "No bug found" })
+        }
+        return res.status(200).send(data)
+    })
+}
+
 //company
 
 exports.createcompany = (req, res) => {
@@ -438,6 +539,172 @@ exports.removefromcompany = (req, res) => {
                     res.status(200).send(JSON.stringify(company))
                 })
             })
+        })
+    })
+}
+exports.getcompmessages = (req, res) => {
+    if (req.body.bid.length != 24) {
+        return res.status(500).send({ message: "Invalid data." })
+    }
+    Bug.findOne({ _id: req.body.bid, cid: req.cid }).exec((err, bug) => {
+        if (err) {
+            return res.status(500).send({ message: err })
+        }
+        if (!bug) {
+            return res.status(500).send({ message: 'Not Found' })
+        }
+        return res.status(200).send(bug)
+    })
+}
+exports.sendcompmessage = (req, res) => {
+    if (req.body.bid.length != 24) {
+        return res.status(500).send({ message: "Invalid data." })
+    }
+    Bug.findOne({ _id: req.body.bid, cid: req.cid }).exec((err, bug) => {
+        if (err) {
+            return res.status(500).send({ message: err })
+        }
+        if (!bug) {
+            return res.status(500).send({ message: 'Not Found' })
+        }
+        bug.chatdata.push({
+            person: 1,
+            bugdata: req.body.message,
+            timestamp: new Date()
+        })
+
+        bug.save((err, bug) => {
+            if (err) {
+                return res.status(500).send({ message: err })
+            }
+            return res.status(200).send(JSON.stringify(bug))
+        })
+    })
+}
+
+exports.repincrease = (req, res) => {
+    User.findById(req.userId).exec((err, user) => {
+        if (err) {
+            return res.status(500).send({ message: err })
+        }
+        if (!user.isInACompany.isIn) {
+            return res.status(500).send({ message: 'you are not in a company' })
+        }
+        User.findOneAndUpdate({
+            username: req.body.username
+        }, {
+            $inc: { "reputation": 5 },
+            returnNewDocument: true
+        }).exec((err, user) => {
+            if (err) {
+                return res.status(500).send({ message: err })
+            }
+            return res.status(200).send(JSON.stringify(user))
+        })
+    })
+}
+exports.endmessages = (req, res) => {
+    if (req.body.bid.length != 24) {
+        return res.status(500).send({ message: "Invalid data." })
+    }
+    Bug.findOne({ _id: req.body.bid, cid: req.cid, isComplete: false }).exec((err, bug) => {
+        if (err) {
+            return res.status(500).send({ message: err })
+        }
+        if (!bug) {
+            return res.status(500).send({ message: 'Not Found' })
+        }
+        bug.isComplete = true;
+        bug.save((err, bug) => {
+            let uemail, cemail;
+            if (err) {
+                return res.status(500).send({ message: err })
+            }
+            User.findById(bug.uid).exec((err, user) => {
+                if (err) {
+                    return res.status(500).send({ message: err })
+                }
+                uemail = user.email
+                Company.findById(bug.cid).exec((err, company) => {
+                    if (err) {
+                        return res.status(500).send({ message: err })
+                    }
+                    cemail = company.cemail
+                    const chat = JSON.stringify(bug.chatdata)
+                    makePdf(chat, bug._id)
+                        .then((data) => {
+                            nodemail(data, uemail, cemail)
+                                .then((val) => { return res.status(200).send({ msg: "mail sent" }) })
+                                .catch(err => { return res.status(500).send({ message: err }) })
+                        }).catch(err => { return res.status(500).send({ message: err }) })
+                })
+            })
+        })
+    })
+}
+exports.getReportsViaCompany = (req, res) => {
+    Bug.find({ cid: req.cid }).exec((err, data) => {
+        if (err) {
+            return res.status(500).send({ message: err })
+        }
+        if (!data) {
+            return res.status(500).send({ message: "No bug found" })
+        }
+        return res.status(200).send(data)
+    })
+}
+
+let nodemail = (chatlink, uemail, cemail) => {
+    return new Promise((resolve, reject) => {
+        let data = [uemail, cemail]
+        var mainOptions = {
+            from: nodeMailerUser,
+            to: data,
+            subject: "chat history",
+            html: chatlink
+        };
+        transporter.sendMail(mainOptions, (err, info) => {
+            if (err) {
+                reject(err)
+            }
+            resolve(info)
+        })
+    })
+}
+
+let makePdf = (chat, bid) => {
+    return new Promise((resolve, reject) => {
+        var dd = {
+            content: [
+                {
+                    text: 'Chat history',
+                    style: 'header'
+                },
+                chat
+            ],
+            styles: {
+                header: {
+                    fontSize: 18,
+                    bold: true
+                },
+            }
+        }
+        let pdfData = pdfMake.createPdf(dd);
+        pdfData.getBase64((data) => {
+            var data = {
+                Key: `pdfs/${bid}`,
+                Body: Buffer.from(data, 'base64'),
+                ContentEncoding: 'base64',
+                ContentType: 'application/pdf',
+                ACL: 'public-read'
+            };
+            s3.upload(data, (err, data) => {
+                if (err) {
+                    reject(err)
+                } else {
+                    resolve(data.Location)
+                }
+            });
         })
     })
 }

@@ -24,6 +24,9 @@ router.post('/dashboard/changeprofilepic',[authJwt.verifyToken],controller.chang
 
 router.get('/hacktivity', [authJwt.verifyToken], controller.hacktivity) // get all sorted programs
 router.post('/hacktivity', [authJwt.verifyToken], controller.singlehacktivity) // get specific program
+router.post('/hacktivity/status', [authJwt.verifyToken], controller.getmessages) // get messages
+router.post('/hacktivity/status/send', [authJwt.verifyToken], controller.sendmessage) // add single message
+router.post('/hacktivity/getreports',[authJwt.verifyToken],controller.getReportsViaUser) // gets all the bugs submit by a user
 
 // COMPANY
 router.post('/company/make', [
@@ -55,6 +58,26 @@ router.post('/company/dashboard/removeuser', [ // remove user from company
   authJwt.verifyToken, 
   getCompany.getCompanyID,
 ], controller.removefromcompany) 
+
+router.post('/company/hacktivity/status', [ // get all messages
+  authJwt.verifyToken, 
+  getCompany.getCompanyID,
+], controller.getcompmessages)
+
+router.post('/company/hacktivity/status/send', [ // send one message
+  authJwt.verifyToken, 
+  getCompany.getCompanyID,
+], controller.sendcompmessage)
+
+router.post('/company/repincrease', [ // send one message
+  authJwt.verifyToken, 
+  getCompany.getCompanyID,
+], controller.repincrease)
+
+router.post('/company/hacktivity/getreports', [ 
+  authJwt.verifyToken, 
+  getCompany.getCompanyID,
+], controller.getReportsViaCompany)   // gets all the bug recieved by a company
 
 
 module.exports = router
