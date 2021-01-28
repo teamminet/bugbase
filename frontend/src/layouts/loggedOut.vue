@@ -11,7 +11,7 @@
 import Navbar from '../components/navbar.vue';
 
 export default {
-  name: 'general',
+  name: 'loggedOut',
   components: {
     Navbar,
   },

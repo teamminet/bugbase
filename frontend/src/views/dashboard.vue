@@ -1,39 +1,40 @@
 <template>
-  <General>
-    <section class="vh">
-      <div class="container">
-        <h3>{{ content }}</h3>
+  <section class="vh">
+    <div class="container">
+      <h1 class="med">Dashboard</h1>
+      <h3 v-if="content.reputation">Reputation: {{ content.reputation }}</h3>
+      <div v-if="!content.programsJoined === []">
+        <h3>Programs joined: {{ content.programsJoined }}</h3>
+        <p>map through this once you add actual data ^</p>
       </div>
-    </section>
-  </General>
+    </div>
+  </section>
 </template>
 
 <script>
-import UserService from '../services/user.service';
-import General from '../layouts/general';
+import UserService from '../services/user.service'
 
 export default {
   name: 'Dashboard',
-  components: { General },
   data() {
     return {
-      content: ''
-    };
+      content: '',
+    }
   },
   mounted() {
-    UserService.getUserBoard().then(
-      response => {
-        this.content = response.data;
+    UserService.getProfile().then(
+      (response) => {
+        this.content = response.data
       },
-      error => {
+      (error) => {
         this.content =
           (error.response &&
             error.response.data &&
             error.response.data.message) ||
           error.message ||
-          error.toString();
-      }
-    );
-  }
-};
+          error.toString()
+      },
+    )
+  },
+}
 </script>

@@ -1,31 +1,32 @@
 <template>
-  <General>
-    <section class="vh">
-      <div class="container">
-        <div v-for="company in companies" :key="company.cname">
-          <h3>{{ company.cname }}</h3>
-        </div>
+  <section class="vh">
+    <div class="container">
+      <h1 class="med">Hacktivity</h1>
+      <div v-for="company in companies" :key="company.cname">
+        <h3>
+          <router-link :to="`/hacktivity/${company.cusername}`">
+            {{ company.cname }}: {{ company.cusername }}
+          </router-link>
+        </h3>
       </div>
-    </section>
-  </General>
+    </div>
+  </section>
 </template>
 
 <script>
-import UserService from '../services/user.service';
-import General from '../layouts/general';
+import UserService from '../services/user.service'
 
 export default {
   name: 'Hacktivity',
-  components: { General },
   data() {
     return {
       companies: [],
-    };
+    }
   },
   mounted() {
     UserService.getHacktivity().then(
       (response) => {
-        this.companies = response.data;
+        this.companies = response.data
       },
       (error) => {
         this.companies =
@@ -33,9 +34,9 @@ export default {
             error.response.data &&
             error.response.data.message) ||
           error.message ||
-          error.toString();
-      }
-    );
+          error.toString()
+      },
+    )
   },
-};
+}
 </script>

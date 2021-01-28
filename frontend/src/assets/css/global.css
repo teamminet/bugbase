@@ -3,7 +3,12 @@
 	padding: 0;
 }
 
-input, select, img, button {
+body {
+	background-color: rgb(25, 25, 25);
+	color: #fff;
+}
+
+input, select, img, button, textarea {
 	width: 100%;
 	font-family: Inter;
 }
@@ -66,4 +71,14 @@ a {
 
 a:hover {
 	color: #007fef;
+}
+
+button {
+	color: #fff;
+	background-color: #007fef;
+	border: none;
+}
+
+button:hover {
+	background-color: #41a0f3;
 }

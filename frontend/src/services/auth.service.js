@@ -1,10 +1,10 @@
-import axios from 'axios';
-let API_URL;
+import axios from 'axios'
+let API_URL
 
 if (process.env.NODE_ENV == 'production') {
-  API_URL = 'https://bugbase.herokuapp.com/api/auth/';
+  API_URL = 'https://bugbase.herokuapp.com/api/auth/'
 } else {
-  API_URL = 'http://localhost:8080/api/auth/';
+  API_URL = 'http://localhost:8080/api/auth/'
 }
 
 class AuthService {
@@ -16,15 +16,15 @@ class AuthService {
       })
       .then((response) => {
         if (response.data.accessToken) {
-          localStorage.setItem('user', JSON.stringify(response.data));
+          localStorage.setItem('user', JSON.stringify(response.data))
         }
 
-        return response.data;
-      });
+        return response.data
+      })
   }
 
   logout() {
-    localStorage.removeItem('user');
+    localStorage.removeItem('user')
   }
 
   register(user) {
@@ -32,8 +32,8 @@ class AuthService {
       username: user.username,
       email: user.email,
       password: user.password,
-    });
+    })
   }
 }
 
-export default new AuthService();
+export default new AuthService()
