@@ -1,11 +1,12 @@
 // Load models
 const User = require('../models/user')
 
-checkDuplicateUsernameOrEmail = (req, res, next) => {
+let checkDuplicateUsernameOrEmail = (req, res, next) => {
   // Username
   User.findOne({
     username: req.body.username,
   }).exec((err, user) => {
+    console.log(req.body)
     if (err) {
       res.status(500).send({ message: err })
       return

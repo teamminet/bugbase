@@ -9,7 +9,15 @@ exports.signup = (req, res) => {
     username: req.body.username,
     email: req.body.email,
     password: bcrypt.hashSync(req.body.password, 8),
+    isInACompany: { isIn: false, cid: null, cname: null },
+    reputation: 0,
+    name: '',
+    website: null,
+    programsJoined: [],
+    submittedBugs: []
   })
+
+  console.log(user)
 
   user.save((err, user) => {
     if (err) {
@@ -25,7 +33,7 @@ exports.signin = (req, res) => {
   User.findOne({
     username: req.body.username,
   })
-    .populate('roles', '-__v')
+    .populate('-__v')
     .exec((err, user) => {
       if (err) {
         res.status(500).send({ message: err })

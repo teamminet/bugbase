@@ -6,15 +6,30 @@ const mongoose = require('mongoose')
 
 const app = express()
 
-//note: set cors up to use frontend domains when deploying the api
+var whitelist = ['http://localhost:8081']
 var corsOptions = {
-  origin: 'http://localhost:8081',
+  origin: function (origin, callback) {
+    if (!origin || whitelist.indexOf(origin) !== -1) {
+      callback(null, true)
+    } else {
+      callback(new Error('Not allowed by CORS'))
+    }
+  },
 }
 
 app.use(cors(corsOptions))
 
 // parse requests of content-type - application/json
-app.use(bodyParser.json())
+// app.use(bodyParser.json())
+app.use((req, res, next) => {
+  bodyParser.json({limit: '50mb', extended: true})(req, res, (err) => {
+    if (err) {
+      console.error(err)
+      return res.sendStatus(400) // Bad request
+    }
+    next()
+  })
+})
 
 // parse requests of content-type - application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: true }))

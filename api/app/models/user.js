@@ -6,12 +6,23 @@ var UserSchema = new Schema({
   username: String,
   email: String,
   password: String,
-  //val will be 1 or 0 (true or false).
-  // if true check for company name and make make requests with that logic
+  reputation: Number,
+  name:String,
+  profileImage: String,
+  website: String,
   isInACompany: {
-    val: Number,
-    name: String,
+    isIn: Boolean,
+    cid: String,
+    cname: String,
   },
+  programsJoined:[
+    {
+      cid: String,
+      cname: String,
+      cusername: String
+    }
+  ],
+  submittedBugs: [String] ,// list of bug ids
 })
 
 module.exports = mongoose.model('User', UserSchema)
