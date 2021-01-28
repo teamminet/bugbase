@@ -2,9 +2,7 @@
   <General>
     <section class="vh">
       <div class="container">
-        <div v-for="company in companies" :key="company.cname">
-          <h3>{{ company.cname }}</h3>
-        </div>
+        <h3>{{ content }}</h3>
       </div>
     </section>
   </General>
@@ -15,20 +13,20 @@ import UserService from '../services/user.service';
 import General from '../layouts/general';
 
 export default {
-  name: 'Hacktivity',
+  name: 'Dashboard',
   components: { General },
   data() {
     return {
-      companies: [],
+      content: ''
     };
   },
   mounted() {
-    UserService.getHacktivity().then(
-      (response) => {
-        this.companies = response.data;
+    UserService.getUserBoard().then(
+      response => {
+        this.content = response.data;
       },
-      (error) => {
-        this.companies =
+      error => {
+        this.content =
           (error.response &&
             error.response.data &&
             error.response.data.message) ||
@@ -36,6 +34,6 @@ export default {
           error.toString();
       }
     );
-  },
+  }
 };
 </script>

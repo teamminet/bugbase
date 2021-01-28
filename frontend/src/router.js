@@ -12,33 +12,39 @@ export const router = new Router({
     {
       path: '/',
       name: 'home',
-      component: Home,
+      component: Home
     },
     {
       path: '/home',
-      component: Home,
+      component: Home
     },
     {
       path: '/login',
-      component: Login,
+      component: Login
     },
     {
       path: '/register',
-      component: Register,
+      component: Register
     },
     {
       path: '/profile',
       name: 'profile',
       // lazy-loaded
-      component: () => import('./views/Profile.vue'),
+      component: () => import('./views/Profile.vue')
     },
     {
       path: '/hacktivity',
       name: 'hacktivity',
       // lazy-loaded
-      component: () => import('./views/hacktivity.vue'),
+      component: () => import('./views/hacktivity.vue')
     },
-  ],
+    {
+      path: '/dashboard',
+      name: 'dashboard',
+      // lazy-loaded
+      component: () => import('./views/dashboard.vue')
+    }
+  ]
 });
 
 router.beforeEach((to, from, next) => {

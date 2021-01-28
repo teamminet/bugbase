@@ -1,6 +1,11 @@
 import axios from 'axios';
+let API_URL;
 
-const API_URL = 'http://localhost:8080/api/auth/';
+if (process.env.NODE_ENV == 'production') {
+  API_URL = 'https://bugbase.herokuapp.com/api/auth/';
+} else {
+  API_URL = 'http://localhost:8080/api/auth/';
+}
 
 class AuthService {
   login(user) {
