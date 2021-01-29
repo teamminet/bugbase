@@ -1,6 +1,7 @@
 const User = require('../models/user')
 const Company = require('../models/company')
 const Bug = require('../models/bug')
+const Competition = require('../models/competition')
 const nodemailer = require('nodemailer')
 const pdfMake = require('pdfmake/build/pdfmake')
 const pdfFonts = require('pdfmake/build/vfs_fonts')
@@ -343,6 +344,130 @@ exports.sendmessage = (req, res) => {
         })
     })
 }
+exports.getComp = (req, res) => {
+    if (req.body.compid.length != 24) {
+        return res.status(500).send({ message: "Invalid data." })
+    }
+    Competition.findById(req.body.compid).exec((err, competition) => {
+        if (err) {
+            return res.status(500).send({ message: err })
+        }
+        if (!competition) {
+            return res.status(500).send({ message: "invalid competition." })
+        }
+        // const [cid,cname,isComplete]=competition
+        let compdata = []
+        competition.compdata.forEach((question) => {
+            compdata.push({
+                qid: question._id,
+                number: question.number,
+                question: question.question,
+                points: question.points,
+                link: question.link
+            })
+        })
+        let index = competition.submissions.findIndex(x => x.uid == req.userId)
+        console.log(index)
+        let sendComp = {
+            cid: competition.cid,
+            cname: competition.cname,
+            isComplete: competition.isComplete,
+            compdata: compdata,
+            submissions: competition.submissions[index]
+        }
+
+        return res.status(200).send(sendComp)
+
+    })
+
+}
+exports.submitAnswer = (req, res) => {
+    if (req.body.compid.length != 24) {
+        return res.status(500).send({ message: "Invalid data." })
+    }
+    Competition.findOne({ _id: req.body.compid, isComplete: false }).exec((err, competition) => {
+        if (err) {
+            return res.status(500).send({ message: err })
+        }
+        if (!competition) {
+            return res.status(500).send({ message: "invalid competition." })
+        }
+        let qid = req.body.qid
+        let answer = req.body.answer
+        let indexOfCorrectQuestion = competition.compdata.findIndex(x => x._id == qid);
+        if (indexOfCorrectQuestion == -1) {
+            return res.status(500).send({ message: "invalid question." })
+        }
+        let correctAns = competition.compdata[indexOfCorrectQuestion].answer
+        const points = competition.compdata[indexOfCorrectQuestion].points;
+        if (answer == correctAns) {
+
+            let userIndex
+            if (competition.submissions) {
+                userIndex = competition.submissions.findIndex(x => x.uid == req.userId);
+                if (userIndex == -1) {
+                    //we will have to push a new element
+                    userIndex = competition.submissions.push({
+                        uid: '',
+                        username: '',
+                        currentScore: 0,
+                        answers: []
+                    }) - 1
+                }
+            } else {
+                competition.submissions = [{
+                    uid: '',
+                    username: '',
+                    currentScore: 0,
+                    answers: []
+                }]
+                userIndex = 0
+            }
+            const currentAnswerArr = competition.submissions[userIndex].answers
+            const currentScore = competition.submissions[userIndex].currentScore;
+            try {
+                const ansIndex = competition.submissions[userIndex].answers.findIndex(x => x.qid == qid)
+                if (competition.submissions[userIndex].answers[ansIndex].isAnswered) {
+                    return res.status(500).send({ message: "Already answered." })
+                }
+            }
+            catch (err) {
+                console.log(err)
+            }
+
+            User.findById(req.userId).exec((err, user) => {
+                if (err) {
+                    return res.status(500).send({ message: err })
+                }
+                let answerObj = [...currentAnswerArr, {
+                    qid: qid,
+                    answer: answer,
+                    isAnswered: true
+                }]
+                let submissionobj = {
+                    uid: req.userId,
+                    username: user.username,
+                    currentScore: parseInt(currentScore) + parseInt(points),
+                    answers: answerObj
+                }
+
+                Object.assign(competition.submissions[userIndex], submissionobj);
+                console.log(userIndex, " ", submissionobj)
+                competition.save((err, comp) => {
+                    if (err) {
+                        return res.status(500).send({ message: err })
+                    }
+                    console.log(comp)
+                    return res.status(200).send(comp)
+                })
+
+            })
+        }
+        else {
+            return res.status(500).send({ message: "Incorrect answer." })
+        }
+    })
+}
 exports.getReportsViaUser = (req, res) => {
     Bug.find({ uid: req.userId }).exec((err, data) => {
         if (err) {
@@ -642,6 +767,110 @@ exports.endmessages = (req, res) => {
         })
     })
 }
+
+exports.compCreate = (req, res) => {
+    const cid = req.cid
+    const cname = req.cname
+    let questions = [];
+    req.body.compdata.forEach((question) => {
+        questions.push({
+            number: question.number || null,
+            question: question.question || null,
+            points: question.points || 0,
+            answer: question.answer || null,
+            link: question.link || null
+        })
+
+    })
+    const comp = new Competition({
+        cid,
+        cname,
+        compdata: questions,
+        isComplete: false
+    })
+    comp.save((err, data) => {
+        if (err) {
+
+            return res.status(500).send({ message: err })
+        }
+        Company.findById(cid).exec((err, company) => {
+            if (err) {
+
+                return res.status(500).send({ message: err })
+            }
+            console.log(data)
+            company.competitions.push(data._id)
+            company.save((err, company) => {
+                if (err) {
+
+                    return res.status(500).send({ message: err })
+                }
+                console.log(data)
+                return res.status(200).send(data)
+            })
+        })
+    })
+}
+exports.editCompetition = (req, res) => {
+    if (req.body.compid.length != 24) {
+        return res.status(500).send({ message: "Invalid data." })
+    }
+
+    Competition.findOne({ _id: req.body.compid, isComplete: false }).exec((err, competition) => {
+        if (err) {
+            return res.status(500).send({ message: err })
+        }
+        let questions = [];
+        console.log(competition, req.body)
+        req.body.compdata.forEach((question) => {
+            questions.push({
+                number: question.number || null,
+                question: question.question || null,
+                points: question.points || 0,
+                answer: question.answer || null,
+                link: question.link || null
+            })
+
+        })
+        competition.compdata = questions
+        competition.save((err, comp) => {
+            if (err) {
+                return res.status(500).send({ message: err })
+            }
+            return res.status(200).send(comp)
+        })
+    })
+}
+exports.endCompetition = (req, res) => {
+    if (req.body.compid.length != 24) {
+        return res.status(500).send({ message: "Invalid data." })
+    }
+    Competition.findOne({ _id: req.body.compid, cid: req.cid }).exec((err, competition) => {
+        if (err) {
+            return res.status(500).send({ message: err })
+        }
+        competition.isComplete = true
+
+        competition.save((err, comp) => {
+            if (err) {
+                return res.status(500).send({ message: err })
+            }
+            return res.status(200).send(comp)
+        })
+    })
+}
+exports.getAllComp = (req, res) => {
+    Competition.find({ cid: req.cid }).exec((err, competition) => {
+        if (err) {
+            return res.status(500).send({ message: err })
+        }
+        if (!competition) {
+            return res.status(500).send({ message: "no competitions" })
+        }
+        return res.status(200).send(JSON.stringify(competition))
+    })
+}
+
 exports.getReportsViaCompany = (req, res) => {
     Bug.find({ cid: req.cid }).exec((err, data) => {
         if (err) {
