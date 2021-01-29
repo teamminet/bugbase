@@ -6,8 +6,10 @@
       </div>
     </div>
     <div class="content">
-      <main>
-        <router-view />
+      <main class="App__main">
+        <transition name="fade" mode="out-in">
+          <router-view />
+        </transition>
       </main>
     </div>
   </div>
@@ -29,7 +31,7 @@ export default {
   margin: 0;
   padding: 0;
   width: 200px;
-  background-color: rgb(25, 25, 25);
+  // background-color: rgb(25, 25, 25);
   position: fixed;
   height: 100%;
   overflow: auto;
@@ -41,14 +43,15 @@ export default {
 
 .dbox {
   min-height: 95%;
-  background-color: rgba($color: #0085ff, $alpha: 0.41);
+  // background-color: rgba($color: #0085ff, $alpha: 0.41);
+  background-color: rgba($color: #e7e7e7, $alpha: 0.9);
   margin: 1em;
   border-radius: 2em;
   padding: 0 1em;
-	display: flex;
-	justify-content: center;
-	align-items: space;
-	flex-direction: column;
+  display: flex;
+  justify-content: center;
+  align-items: space;
+  flex-direction: column;
   .nav {
     margin: 1em 0;
   }
@@ -63,8 +66,8 @@ export default {
 
 div.content {
   margin-left: 100px;
-	// padding: 1px 16px;
-	padding: 2em 0;
+  // padding: 1px 16px;
+  padding: 2em 0;
   /* height: 1000px; */
 }
 
@@ -86,9 +89,21 @@ div.content {
   .sidebar a {
     text-align: center;
     float: none;
-	}
-	.dbox {
-		width: 90%;
-	}
+  }
+  .dbox {
+    width: 90%;
+  }
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition-duration: 0.2s;
+  transition-property: opacity;
+  transition-timing-function: ease;
+}
+
+.fade-enter,
+.fade-leave-active {
+  opacity: 0;
 }
 </style>

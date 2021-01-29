@@ -46,6 +46,12 @@ export const router = new Router({
           component: () => import('./views/Profile.vue'),
         },
         {
+          path: '/profile/edit',
+          name: 'profile-edit',
+          // lazy-loaded
+          component: () => import('./views/editprofile.vue'),
+        },
+        {
           path: '/hacktivity',
           name: 'hacktivity',
           // lazy-loaded
@@ -80,18 +86,62 @@ export const router = new Router({
           path: '/company/dashboard',
           // lazy-loaded
           component: () => import('./views/mycompany.vue'),
-				},
+        },
+        {
+          name: 'edit-company-dashboard',
+          path: '/company/dashboard/edit',
+          // lazy-loaded
+          component: () => import('./views/editcompany.vue'),
+        },
         {
           name: 'all-submissions',
           path: '/company/submissions',
           // lazy-loaded
           component: () => import('./views/submissions/allsubmissions.vue'),
         },
-				{
+        {
+          name: 'leaderboard',
+          path: '/leaderboard',
+          // lazy-loaded
+          component: () => import('./views/leaderboard.vue'),
+        },
+        {
           name: 'specific-submission',
           path: '/company/submissions/:id',
           // lazy-loaded
           component: () => import('./views/submissions/onesub.vue'),
+        },
+        {
+          name: 'user-side-chat',
+          path: '/bug/:id',
+          // lazy-loaded
+          component: () => import('./views/userchat.vue'),
+        },
+        {
+          name: 'hacker-profile',
+          path: '/hacker/:username',
+          // lazy-loaded
+          component: () => import('./views/hacker.vue'),
+        },
+
+        //COMPETITION ROUTES
+        {
+          name: 'create-competition',
+          path: '/competition/create',
+          // lazy-loaded
+          component: () => import('./views/competition/create.vue'),
+        },
+        {
+          name: 'attempt-competition',
+          path: '/competition/:id',
+          // lazy-loaded
+          component: () => import('./views/competition/attempt.vue'),
+        },
+        {
+          name: 'edit-competition',
+          path: '/competition/edit/:id',
+          // lazy-loaded
+          component: () => import('./views/competition/edit.vue'),
         },
       ],
     },

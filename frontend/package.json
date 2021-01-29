@@ -9,6 +9,8 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
+    "@kangc/v-md-editor": "^1.6.0",
+    "@vue/cli-plugin-pwa": "^4.5.11",
     "axios": "^0.21.1",
     "babel-eslint": "^10.1.0",
     "eslint": "^7.18.0",

@@ -2,7 +2,7 @@
   <nav>
     <div class="nav">
       <router-link to="/">
-        <img class="logo" src="@/assets/img/logo.svg" alt="" />
+        <img class="logo" src="@/assets/img/logo.png" alt="" />
       </router-link>
 
       <router-link v-if="currentUser" to="/profile">
@@ -15,10 +15,15 @@
         Hacktivity
       </router-link>
 
-      <router-link v-if="currentUser" to="/dashboard">
+      <router-link v-if="currentUser" to="/leaderboard">
+        <img src="@/assets/img/user.svg" alt="" />
+        Leaderboard
+      </router-link>
+
+      <!-- <router-link v-if="currentUser" to="/dashboard">
         <img src="@/assets/img/user.svg" alt="" />
         Dashboard
-      </router-link>
+      </router-link> -->
 
       <router-link
         v-if="currentUser && reqComplete && !profile.isInACompany.isIn"
@@ -47,8 +52,8 @@
       </router-link>
 
       <a v-if="currentUser" href @click.prevent="logOut">
-        <img src="@/assets/img/user.svg" alt="" />
-        Logout
+        <img src="@/assets/img/logout.png" alt="" />
+        <!-- Logout -->
       </a>
     </div>
   </nav>
@@ -108,18 +113,18 @@ export default {
     margin: 0;
   }
   img {
-		width: 50%;
-		display: none;
+    width: 50%;
+    display: none;
   }
   a {
     img {
       margin-bottom: 0.1em;
     }
-		color: #fff;
-		display: flex;
-		justify-content: center;
-		align-items: center;
-		flex-direction: column;
+    color: #222;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
   }
   a:hover {
     color: #007fef;
@@ -128,11 +133,11 @@ export default {
 
 @media (min-width: 750px) {
   .nav {
-		justify-content: space-around;
-		flex-direction: column;
-		img {
-			display: block;
-		}
+    justify-content: space-around;
+    flex-direction: column;
+    img {
+      display: block;
+    }
   }
 }
 </style>

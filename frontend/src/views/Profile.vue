@@ -1,46 +1,48 @@
 <template>
   <section class="vh">
     <div class="container">
-      <div class="flex-center">
-        <div class="four columns">
+      <img src="@/assets/img/bg.png" class="backg" alt="" />
+      <div class="row overlap">
+        <div class="two columns">
           <img
-            v-if="!changed"
+            v-if="content.profileImage"
             :src="content.profileImage"
-            alt=""
             class="profilepic"
+            alt=""
           />
-          <img v-if="changed" :src="image" alt="" class="profilepic" />
-          <button @click="updateProfilePic" v-if="!image == '' && !changed">
-            Update profile pic
-          </button>
-
-          <!-- <p>{{ content }}</p> -->
-
-          <input
-            @change="handleImage"
-            type="file"
-            accept="image/*"
-            ref="inputFile"
-          />
-
-          <!-- <img v-if="image" :src="image" class="image" /> -->
-
-          <!-- <p v-if="image">{{ image }}</p> -->
+          <img v-else src="@/assets/img/user.svg" class="profilepic" alt="" />
+        </div>
+        <div class="ten columns">
+          <h5 class="user">
+            <i>@{{ content.username }}</i>
+            <router-link to="/profile/edit">
+              <img src="@/assets/img/edit.png" class="edit" alt="" />
+            </router-link>
+          </h5>
         </div>
       </div>
-      <h1>
-        Hi,
-        <span class="med">{{ content.username }}</span>
-      </h1>
-      <h3>{{ content.email }}</h3>
-      <!-- <h3>{{ content }}</h3> -->
+      <div class="u-cf"></div>
 
-      <h2 class="med">Your Organisations</h2>
-      <h5 v-if="loaded && content.isInACompany.isIn">
-        <router-link to="/company/dashboard">
-          {{ content.isInACompany.cname }}
+      <br />
+      <br />
+
+      <p v-if="content">{{ content }}</p>
+
+      <br />
+      <br />
+
+      <div v-if="content.isInACompany.isIn === true" class="company">
+        <h4 class="semi">{{ content.isInACompany.cname }}</h4>
+      </div>
+
+      {{ content.reputation }}
+
+      <h5>Reports</h5>
+      <div v-for="report in reports" :key="report">
+        <router-link :to="`/bug/${report._id}`">
+          <p>{{ report.chatdata[0] }}</p>
         </router-link>
-      </h5>
+      </div>
     </div>
   </section>
 </template>
@@ -53,6 +55,7 @@ export default {
   data() {
     return {
       content: {},
+      reports: false,
       loaded: false,
       changed: false,
       image: '',
@@ -114,9 +117,26 @@ export default {
         },
       )
     },
+    getReports() {
+      UserService.getUserReports().then(
+        (response) => {
+          this.reports = response.data
+          this.loaded = true
+        },
+        (error) => {
+          this.reports =
+            (error.response &&
+              error.response.data &&
+              error.response.data.message) ||
+            error.message ||
+            error.toString()
+        },
+      )
+    },
   },
   mounted() {
     this.fetchProfile()
+    this.getReports()
   },
 }
 </script>
@@ -124,5 +144,36 @@ export default {
 <style lang="scss" scoped>
 .profilepic {
   border-radius: 100%;
+  z-index: 2;
+  margin-left: 2em;
+}
+
+.user {
+  margin-top: 3em;
+  // margin-left: -0.6em;
+  margin-left: 0.25em;
+}
+
+.edit {
+  width: 1em;
+  margin-left: 0.5em;
+  margin-bottom: -0.15em;
+  transition: 0.5s;
+}
+
+.edit:hover {
+  margin-bottom: 0;
+}
+
+.overlap {
+  // margin-bottom: -3em;
+  margin-top: -4em;
+  position: relative;
+}
+
+.company {
+	background-color: rgba($color: #69e, $alpha: 0.5);
+	padding: 2em;
+	font-size: 2em;
 }
 </style>

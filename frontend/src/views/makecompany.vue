@@ -1,42 +1,80 @@
 <template>
   <div class="container">
-    <h1 class="med">Create an organisation</h1>
-
-    <div class="row">
+    <div class="vh">
+      <!-- <div class="row"> -->
       <!-- <div class="flex-center"> -->
-      <div v-if="!submitted" class="six columns">
+      <div v-if="!submitted" class="ten columns">
         <form @submit="createCompany">
-          <label for="">Name</label>
-          <input
-            type="text"
-            placeholder="Name of the company"
-            v-model="name"
-            required
-          />
+          <div v-if="step === 0">
+            <!-- <h3 class="semi titlething">Create an organisation</h3> -->
+            <!-- <label for="">Name</label> -->
+            <input
+              type="text"
+              placeholder="Name of the company"
+              v-model="name"
+              required
+            />
+            <div class="three columns u-pull-right">
+              <button @click.prevent="changeStep('front')">
+                Next
+              </button>
+            </div>
+            <div class="u-cf"></div>
+          </div>
 
-          <label for="">Email</label>
-          <input
-            type="email"
-            placeholder="Company email"
-            v-model="email"
-            name=""
-            id=""
-            required
-          />
+          <div v-if="step === 1">
+            <input
+              type="email"
+              placeholder="Company email"
+              v-model="email"
+              name=""
+              id=""
+              required
+            />
+            <div class="row">
+              <div class="three columns u-pull-left">
+                <button @click.prevent="changeStep('back')">
+                  Back
+                </button>
+              </div>
+              <div class="three columns u-pull-right">
+                <button @click.prevent="changeStep('front')">
+                  Next
+                </button>
+              </div>
+            </div>
+            <div class="u-cf"></div>
+          </div>
 
-          <label for="">Username</label>
-          <input
-            type="text"
-            placeholder="Username"
-            v-model="username"
-            required
-          />
+          <div v-if="step === 2">
+            <!-- <label for="">Username</label> -->
+            <input
+              type="text"
+              placeholder="Username"
+              v-model="username"
+              required
+            />
+            <div class="row">
+              <div class="three columns u-pull-left">
+                <button @click.prevent="changeStep('back')">
+                  Back
+                </button>
+              </div>
+              <div class="three columns u-pull-right">
+                <button>Create</button>
+              </div>
+            </div>
+            <div class="u-cf"></div>
+          </div>
 
-          <button class="button-primary">Create</button>
+          <div class="flex-center">
+            <div class="six columns"></div>
+          </div>
         </form>
         <!-- </div> -->
       </div>
       <div v-if="submitted">{{ res.message }}</div>
+      <!-- </div> -->
     </div>
   </div>
 </template>
@@ -53,6 +91,7 @@ export default {
       name: '',
       res: {},
       submitted: false,
+      step: 0,
     }
   },
   methods: {
@@ -62,7 +101,7 @@ export default {
         (response) => {
           this.res = response.data
           this.submitted = true
-          window.location.href = '/company/dashboard'
+          window.location.href = '/company/dashboard/edit'
           // this.$router.push('/company/dashboard')
         },
         (error) => {
@@ -74,6 +113,13 @@ export default {
             error.toString()
         },
       )
+    },
+    changeStep(yoz) {
+      if (yoz == 'front') {
+        this.step = this.step + 1
+      } else if (yoz == 'back') {
+        this.step = this.step - 1
+      }
     },
   },
   // mounted() {
@@ -93,3 +139,29 @@ export default {
   // },
 }
 </script>
+
+<style lang="scss" scoped>
+.vh {
+  height: 90vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.titlething {
+  margin-bottom: 0.5em;
+}
+
+input {
+  border: none;
+  background-color: transparent;
+  font-size: 3em;
+  height: 3em;
+}
+
+input:active,
+input:focus {
+  border: none;
+}
+</style>

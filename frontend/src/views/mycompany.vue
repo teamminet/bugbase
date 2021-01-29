@@ -1,31 +1,106 @@
 <template>
   <section class="vh">
     <div class="container">
+      <!-- <p>{{ currentUser.username }}</p> -->
+
+      <div class="three columns">
+        <img
+          v-if="company.companyProfileImage"
+          :src="company.companyProfileImage"
+          alt=""
+          class="profileimg"
+        />
+        <img v-else src="@/assets/img/user.svg" alt="" />
+      </div>
+      <div class="u-cf"></div>
+      <br />
       <h1 class="med">{{ company.cname }}</h1>
-      <p>{{ currentUser.username }}</p>
-      <p>{{ company }}</p>
-      <h3 class="med">Members</h3>
-      <ul v-if="!members == []">
-        <p>{{ members }}</p>
-        <li v-for="member in members" :key="member">
-          <span v-if="!member.name === null">{{ member.name }}</span>
-          <span v-else>{{ member.username }}</span>
-          :
-          <a href @click.prevent="removeUser(member.username)">
-            remove from company
-          </a>
-        </li>
-        <!-- <li v-for="member in company.members" :key="member">{{ member }}: <a href @click.prevent="removeUser(member)">remove this user</a></li> -->
-      </ul>
+      <br />
 
-      <label>Add Members</label>
-      <h5 v-if="responsemsg">{{ responsemsg }}</h5>
-      <input v-model="userToAdd" type="text" placeholder="Member username" />
-      <button @click="addAUser">add members</button>
+      <div class="row">
+        <!-- left -->
 
-      <router-link to="/company/submissions">
-        <button>Check bug reports</button>
-      </router-link>
+        <div class="seven columns" v-if="company.description">
+          <!-- <h5 class="semi">Description</h5> -->
+          <vue-simple-markdown
+            class="md"
+            :source="company.description"
+          ></vue-simple-markdown>
+        </div>
+
+        <!-- right -->
+
+        <div class="five columns">
+          <div class="row">
+            <div v-if="members">
+              <h5 class="semi">Members</h5>
+              <div v-for="member in members" :key="member">
+                <div class="flex">
+                  <div class="image">
+                    <img
+                      v-if="member.profileImage"
+                      :src="member.profileImage"
+                      alt=""
+                    />
+                    <img src="@/assets/img/user.svg" v-else alt="" />
+                  </div>
+                  <div class="member-text">
+                    <h5 v-if="member.name">{{ member.name }}</h5>
+                    <h5 v-else>{{ member.username }}</h5>
+                  </div>
+                  <img
+                    src="@/assets/img/close.png"
+                    alt=""
+                    class="close"
+                    @click.prevent="removeUser(member.username)"
+                  />
+                </div>
+                <!-- {{ member }} -->
+              </div>
+            </div>
+          </div>
+          <br />
+          <div class="row">
+            <h5 class="semi">Add Members</h5>
+            <h5 v-if="responsemsg">{{ responsemsg }}</h5>
+            <input
+              v-model="userToAdd"
+              type="text"
+              placeholder="Member username"
+            />
+            <br />
+            <button @click="addAUser">add members</button>
+          </div>
+          <br />
+          <div v-if="competitions">
+            <h5 class="semi">Competitions</h5>
+            <div class="competitionyo" v-for="comp in competitions" :key="comp">
+              <p v-if="comp.isComplete === false">
+                <span>
+                  <router-link :to="`/competition/edit/${comp._id}`">
+                    Competition: {{ comp._id }}
+                  </router-link>
+                </span>
+                <a href @click.prevent="endComp(comp._id)">
+                  <img src="@/assets/img/close.png" class="closecomp" alt="" />
+                </a>
+              </p>
+            </div>
+          </div>
+          <br />
+          <h5 class="semi">Quick Links</h5>
+          <router-link to="/company/submissions">
+            <button>Check bug reports</button>
+          </router-link>
+          <router-link to="/competition/create">
+            <button>Create a competition</button>
+          </router-link>
+
+          <router-link to="/company/dashboard/edit">
+            <button>edit company</button>
+          </router-link>
+        </div>
+      </div>
     </div>
   </section>
 </template>
@@ -41,6 +116,7 @@ export default {
       members: [],
       userToAdd: '',
       responsemsg: false,
+      competitions: false,
     }
   },
   computed: {
@@ -86,6 +162,7 @@ export default {
           this.company = response.data
           this.userToAdd = ''
           this.responsemsg = 'User added succesfully'
+          this.getCompanyMembers()
         },
         (error) => {
           this.company =
@@ -117,9 +194,80 @@ export default {
         },
       )
     },
+    getAllCompetitions() {
+      UserService.getAllCompetitions().then(
+        (response) => {
+          this.competitions = response.data
+        },
+        (error) => {
+          this.competitions =
+            (error.response &&
+              error.response.data &&
+              error.response.data.message) ||
+            error.message ||
+            error.toString()
+        },
+      )
+    },
+    endComp(compid) {
+      UserService.endCompetition(compid).then(
+        () => {
+          // (response) => {
+          this.getAllCompetitions()
+        },
+        (error) => {
+          this.competitions =
+            (error.response &&
+              error.response.data &&
+              error.response.data.message) ||
+            error.message ||
+            error.toString()
+        },
+      )
+    },
   },
   mounted() {
     this.fetchCompany()
+    this.getAllCompetitions()
   },
 }
 </script>
+<style lang="scss" scoped>
+.profileimg {
+  border-radius: 1em;
+}
+.flex {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+.image {
+  width: 15%;
+  margin-right: 1.5em;
+  img {
+    border-radius: 1em;
+    border-radius: 100%;
+  }
+}
+
+.profileimg {
+  border-radius: 1em;
+}
+.close {
+  margin-left: 1.5em;
+  width: 8%;
+}
+
+.close:hover {
+  cursor: pointer;
+}
+
+.closecomp {
+  width: 1.5em;
+  margin-left: 0.5em;
+  margin-bottom: -0.2em;
+}
+.competitionyo {
+  margin-bottom: 0.2em;
+}
+</style>

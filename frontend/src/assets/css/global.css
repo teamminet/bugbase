@@ -4,13 +4,18 @@
 }
 
 body {
-	background-color: rgb(25, 25, 25);
-	color: #fff;
+	/* background-color: rgb(25, 25, 25); */
+	/* color: #fff; */
 }
 
 input, select, img, button, textarea {
 	width: 100%;
 	font-family: Inter;
+}
+
+textarea {
+	min-width: 100%;
+	max-width: 100%;
 }
 
 img {
@@ -40,7 +45,7 @@ h1, h2, h3, h4, h5, h6, .zero {
 	flex-direction: column;
 }
 
-.noselect, button, img {
+.noselect, button, img, br {
 	-webkit-touch-callout: none;
 	-webkit-user-select: none;
 	-khtml-user-select: none;
@@ -50,12 +55,12 @@ h1, h2, h3, h4, h5, h6, .zero {
 }
 
 ::-moz-selection {
-	color: #fff;
+	color: #222;
 	background: #2690ec3f;
 }
 
 ::selection {
-	color: #fff;
+	color: #222;
 	background: #2690ec3f;
 }
 
@@ -65,12 +70,12 @@ h1, h2, h3, h4, h5, h6, .zero {
 
 a {
 	text-decoration: none;
-	color: #00d6da;
+	color: #007fef;
 	transition: 0.3s;
 }
 
 a:hover {
-	color: #007fef;
+	color: #00d6da;
 }
 
 button {
@@ -81,4 +86,10 @@ button {
 
 button:hover {
 	background-color: #41a0f3;
+	color: #fff;
+	border: none;
+}
+
+button:focus, button:active {
+	color: #fff;
 }

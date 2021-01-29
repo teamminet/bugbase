@@ -11,7 +11,7 @@
               Bounties.
             </h4>
             <p class="noselect start">
-              <router-link to="/register">Get started ></router-link>
+              <router-link to="/login">Get started ></router-link>
             </p>
           </div>
         </div>
@@ -129,31 +129,31 @@
 </template>
 
 <script>
-import UserService from '../services/user.service';
+// import UserService from '../services/user.service'
 
 export default {
   name: 'Home',
-  data() {
-    return {
-      content: '',
-    };
-  },
-  mounted() {
-    UserService.getPublicContent().then(
-      (response) => {
-        this.content = response.data;
-      },
-      (error) => {
-        this.content =
-          (error.response &&
-            error.response.data &&
-            error.response.data.message) ||
-          error.message ||
-          error.toString();
-      }
-    );
-  },
-};
+  // data() {
+  //   return {
+  //     content: '',
+  //   };
+  // },
+  // mounted() {
+  //   UserService.getPublicContent().then(
+  //     (response) => {
+  //       this.content = response.data;
+  //     },
+  //     (error) => {
+  //       this.content =
+  //         (error.response &&
+  //           error.response.data &&
+  //           error.response.data.message) ||
+  //         error.message ||
+  //         error.toString();
+  //     }
+  //   );
+  // },
+}
 </script>
 
 <style lang="scss" scoped>

@@ -1,32 +1,47 @@
 <template>
   <div class="container">
-    <h1 class="med">Create Report for {{ company.cname }}</h1>
+    <br />
+    <h1>
+      Create Report for
+      <span class="med">{{ company.cname }}</span>
+    </h1>
+    <br />
+    <br />
+    <!-- <p>{{ company.inScopeWebsites }}</p> -->
 
-    <p>{{ company }}</p>
-
-    <div v-if="!submitted">
-      <div class="flex">
-        <button v-on:click="togglepreview()">toggle preview</button>
+    <div class="row">
+      <div class="ten columns">
+        <v-md-editor v-model="source" height="500px"></v-md-editor>
       </div>
 
-      <textarea
-        name=""
-        v-if="preview === false"
-        placeholder="Write markdown here"
-        v-model="source"
-        id=""
-        cols="30"
-        rows="10"
-      ></textarea>
-
-      <div v-if="preview === true">
-        <vue-simple-markdown class="md" :source="source"></vue-simple-markdown>
+      <div class="two columns">
+        <div class="image flex-center">
+          <img
+            v-if="company.companyProfileImage"
+            :src="company.companyProfileImage"
+            alt=""
+          />
+          <img v-else src="@/assets/img/user.svg" alt="" />
+        </div>
+        <h4 class="semi center">{{ company.cname }}</h4>
+        <br />
+        <div class="web">
+          <h6 class="semi">In Scope Websites</h6>
+          <ul>
+            <li v-for="web in company.inScopeWebsites" :key="web">
+              {{ web }}
+            </li>
+          </ul>
+        </div>
+        <div class="web">
+          <h6 class="semi">Out of Scope Websites</h6>
+          <ul>
+            <li v-for="web in company.outOfScopeWebsites" :key="web">
+              {{ web }}
+            </li>
+          </ul>
+        </div>
       </div>
-
-      <button v-on:click="submitForm()">submit</button>
-    </div>
-    <div v-if="submitted">
-      {{ res }}
     </div>
   </div>
 </template>
@@ -85,11 +100,23 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.md {
-  color: #fff;
-}
-
 .flex {
   display: flex;
+}
+
+.md {
+  margin: 2em 0;
+}
+
+.image {
+  img {
+    border-radius: 2em;
+    width: 75%;
+    margin-bottom: 0.5em;
+  }
+}
+
+.web h6 {
+  font-size: 1.2em;
 }
 </style>

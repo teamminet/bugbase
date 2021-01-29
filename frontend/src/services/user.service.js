@@ -13,6 +13,22 @@ class UserService {
     return axios.get(`${API_URL}/company/dashboard`, { headers: authHeader() })
   }
 
+  getLeaderboard() {
+    return axios.get(`${API_URL}/leaderboard`, { headers: authHeader() })
+  }
+
+  getHacker(username) {
+    return axios.post(
+      `${API_URL}/hacker`,
+      {
+        username,
+      },
+      {
+        headers: authHeader(),
+      },
+    )
+  }
+
   // getDashboard() {
   //   return axios.get(`${API_URL}/kjkj`, {
   //     headers: authHeader(),
@@ -31,8 +47,8 @@ class UserService {
     })
   }
 
-  getHacktivity() {
-    return axios.get(`${API_URL}/hacktivity`, {
+  getHacktivity(sort) {
+    return axios.get(`${API_URL}/hacktivity?sorttype=${sort}`, {
       headers: authHeader(),
     })
   }
@@ -49,11 +65,87 @@ class UserService {
     )
   }
 
+  updateCompanyProfile(cname, description, inscope, outofscope, bountyVals) {
+    return axios.post(
+      `${API_URL}/company/dashboard`,
+      {
+        cname,
+        description,
+        inscope,
+        outofscope,
+        bountyVals,
+      },
+      {
+        headers: authHeader(),
+      },
+    )
+  }
+
   updateProfilePic(imgData) {
     return axios.post(
       `${API_URL}/dashboard/changeprofilepic`,
       {
         profileImage: imgData,
+      },
+      {
+        headers: authHeader(),
+      },
+    )
+  }
+
+  updateCompanyProfilePic(imgData) {
+    return axios.post(
+      `${API_URL}/company/dashboard/changeprofilepic`,
+      {
+        companyProfileImage: imgData,
+      },
+      {
+        headers: authHeader(),
+      },
+    )
+  }
+
+  updateProfile(name, website) {
+    return axios.post(
+      `${API_URL}/dashboard`,
+      {
+        name,
+        website,
+      },
+      {
+        headers: authHeader(),
+      },
+    )
+  }
+
+  //get user submitted reports
+  getUserReports() {
+    return axios.post(
+      `${API_URL}/hacktivity/getreports`,
+      {},
+      {
+        headers: authHeader(),
+      },
+    )
+  }
+
+  //get all company reports
+  getCompanyReports() {
+    return axios.post(
+      `${API_URL}/company/hacktivity/getreports`,
+      {},
+      {
+        headers: authHeader(),
+      },
+    )
+  }
+
+  //get company
+  getCompanyReportData(bid) {
+    return axios.post(
+      `${API_URL}/company/hacktivity/status`,
+      {
+        bid,
       },
       {
         headers: authHeader(),
@@ -120,6 +212,133 @@ class UserService {
         cname: name,
         cemail: email,
         cusername: username,
+      },
+      {
+        headers: authHeader(),
+      },
+    )
+  }
+
+  increaseRep(username) {
+    return axios.post(
+      `${API_URL}/company/repincrease`,
+      {
+        username,
+      },
+      {
+        headers: authHeader(),
+      },
+    )
+  }
+
+  // CHATTING FUNCTIONALITY
+
+  //send company side message
+  sendCompanyMsg(bid, message) {
+    return axios.post(
+      `${API_URL}/company/hacktivity/status/send`,
+      {
+        bid,
+        message,
+      },
+      {
+        headers: authHeader(),
+      },
+    )
+  }
+
+  //send user side message
+  sendUserMsg(bid, message) {
+    return axios.post(
+      `${API_URL}/hacktivity/status/send`,
+      {
+        bid,
+        message,
+      },
+      {
+        headers: authHeader(),
+      },
+    )
+  }
+
+  //COMPETITIONS FUNCTIONALITY
+  createCompetition(compdata) {
+    return axios.post(
+      `${API_URL}/company/competition/create`,
+      {
+        compdata,
+      },
+      {
+        headers: authHeader(),
+      },
+    )
+  }
+
+  getSpecificCompetition(compid) {
+    return axios.post(
+      `${API_URL}/competition/getcomp`,
+      {
+        compid,
+      },
+      {
+        headers: authHeader(),
+      },
+    )
+  }
+
+  submitAnswer(qid, answer, compid) {
+    return axios.post(
+      `${API_URL}/competition/submit`,
+      {
+        qid,
+        answer,
+        compid,
+      },
+      {
+        headers: authHeader(),
+      },
+    )
+  }
+
+  //get all company ongoing competitions
+  getAllCompetitions() {
+    return axios.get(`${API_URL}/company/competition/getComp`, {
+      headers: authHeader(),
+    })
+  }
+
+  submitEdit(compid, compdata) {
+    return axios.post(
+      `${API_URL}/company/competition/edit`,
+      {
+        compid,
+        compdata,
+      },
+      {
+        headers: authHeader(),
+      },
+    )
+  }
+
+  //end a competition
+  endCompetition(compid) {
+    return axios.post(
+      `${API_URL}/company/competition/end`,
+      {
+        compid,
+      },
+      {
+        headers: authHeader(),
+      },
+    )
+	}
+	
+	//get company specific comps
+	getSpecificCompetitionforCompany(cid) {
+    return axios.post(
+      `${API_URL}/competition/getcompofcompany`,
+      {
+        cid,
       },
       {
         headers: authHeader(),
