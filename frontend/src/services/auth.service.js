@@ -2,7 +2,7 @@ import axios from 'axios'
 let API_URL
 
 if (process.env.NODE_ENV == 'production') {
-  API_URL = 'https://bugbase.herokuapp.com/api/auth/'
+  API_URL = 'https://api.bugbase.in/api/auth/'
 } else {
   API_URL = 'http://localhost:8080/api/auth/'
 }

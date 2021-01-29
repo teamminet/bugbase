@@ -93,3 +93,8 @@ button:hover {
 button:focus, button:active {
 	color: #fff;
 }
+
+button:disabled {
+	background-color: #41a0f3;
+	cursor:default;
+}

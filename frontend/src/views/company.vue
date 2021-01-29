@@ -65,20 +65,22 @@
         <div v-if="members">
           <h5 class="semi">Members</h5>
           <div v-for="member in members" :key="member">
-            <div class="flex">
-              <div class="image">
-                <img
-                  v-if="member.profileImage"
-                  :src="member.profileImage"
-                  alt=""
-                />
-                <img src="@/assets/img/user.svg" v-else alt="" />
+            <router-link :to="`/hacker/${member.username}`">
+              <div class="flex">
+                <div class="image">
+                  <img
+                    v-if="member.profileImage"
+                    :src="member.profileImage"
+                    alt=""
+                  />
+                  <img src="@/assets/img/user.svg" v-else alt="" />
+                </div>
+                <div class="memname">
+                  <h5 v-if="member.name">{{ member.name }}</h5>
+                  <h5 v-else>{{ member.username }}</h5>
+                </div>
               </div>
-              <div>
-                <h5 v-if="member.name">{{ member.name }}</h5>
-                <h5 v-else>{{ member.username }}</h5>
-              </div>
-            </div>
+            </router-link>
             <!-- {{ member }} -->
           </div>
           <br />
@@ -253,6 +255,13 @@ export default {
   h6 {
     font-size: 1.2em;
     margin-bottom: 0.2em;
+  }
+}
+
+.memname {
+  h5 {
+		margin-top: -0.3em;
+		margin-left: -0.8em;
   }
 }
 </style>

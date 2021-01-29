@@ -3,7 +3,7 @@ import authHeader from './auth-header'
 let API_URL
 
 if (process.env.NODE_ENV == 'production') {
-  API_URL = 'https://bugbase.herokuapp.com/api'
+  API_URL = 'https://api.bugbase.in/api'
 } else {
   API_URL = 'http://localhost:8080/api'
 }
@@ -22,6 +22,18 @@ class UserService {
       `${API_URL}/hacker`,
       {
         username,
+      },
+      {
+        headers: authHeader(),
+      },
+    )
+  }
+
+  getUsersfromArray(uids) {
+    return axios.post(
+      `${API_URL}/userfromid`,
+      {
+        uids,
       },
       {
         headers: authHeader(),
@@ -331,10 +343,10 @@ class UserService {
         headers: authHeader(),
       },
     )
-	}
-	
-	//get company specific comps
-	getSpecificCompetitionforCompany(cid) {
+  }
+
+  //get company specific comps
+  getSpecificCompetitionforCompany(cid) {
     return axios.post(
       `${API_URL}/competition/getcompofcompany`,
       {
