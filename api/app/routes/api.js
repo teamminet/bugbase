@@ -24,9 +24,14 @@ router.post('/dashboard/changeprofilepic',[authJwt.verifyToken],controller.chang
 
 router.get('/hacktivity', [authJwt.verifyToken], controller.hacktivity) // get all sorted programs
 router.post('/hacktivity', [authJwt.verifyToken], controller.singlehacktivity) // get specific program
+
+router.post('/hacktivity/report', [authJwt.verifyToken], controller.createbug) // submit bug
 router.post('/hacktivity/status', [authJwt.verifyToken], controller.getmessages) // get messages
 router.post('/hacktivity/status/send', [authJwt.verifyToken], controller.sendmessage) // add single message
 router.post('/hacktivity/getreports',[authJwt.verifyToken],controller.getReportsViaUser) // gets all the bugs submit by a user
+
+router.post('/competition/getComp',[authJwt.verifyToken],controller.getComp)   // this will get comp based on compid
+router.post('/competition/submit',[authJwt.verifyToken],controller.submitAnswer) //submits competition answer 
 
 // COMPANY
 router.post('/company/make', [
@@ -74,10 +79,31 @@ router.post('/company/repincrease', [ // send one message
   getCompany.getCompanyID,
 ], controller.repincrease)
 
+router.post('/company/hacktivity/status/end', [ 
+  authJwt.verifyToken, 
+  getCompany.getCompanyID,
+], controller.endmessages)
+
+router.post('/company/competition/create', [ 
+  authJwt.verifyToken, 
+  getCompany.getCompanyID,
+], controller.compCreate)   // creates competition
+router.post('/company/competition/edit', [ 
+  authJwt.verifyToken, 
+  getCompany.getCompanyID,
+], controller.editCompetition)  // edits competition
+router.post('/company/competition/end', [ 
+  authJwt.verifyToken, 
+  getCompany.getCompanyID,
+], controller.endCompetition)  // ends competition 
+router.get('/company/competition/getComp', [ 
+  authJwt.verifyToken, 
+  getCompany.getCompanyID,
+], controller.getAllComp)  // get all competition for a company 
+
 router.post('/company/hacktivity/getreports', [ 
   authJwt.verifyToken, 
   getCompany.getCompanyID,
 ], controller.getReportsViaCompany)   // gets all the bug recieved by a company
-
 
 module.exports = router
