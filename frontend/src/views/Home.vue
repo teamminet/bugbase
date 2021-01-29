@@ -11,7 +11,7 @@
               Bounties.
             </h4>
             <p class="noselect start">
-              <router-link to="/login">Get started ></router-link>
+              <router-link to="/register">Get started ></router-link>
             </p>
           </div>
         </div>

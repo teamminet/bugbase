@@ -1,63 +1,55 @@
 <template>
   <nav>
-    <div class="container">
-      <div class="nav">
-        <router-link to="/">BugBase</router-link>
-        <ul class="zero">
-          <li v-if="currentUser">
-            <router-link to="/hacktivity">
-              Hacktivity
-            </router-link>
-          </li>
-        </ul>
-        <ul class="zero">
-          <li v-if="currentUser">
-            <router-link to="/dashboard">
-              Dashboard
-            </router-link>
-          </li>
-        </ul>
+    <div class="nav">
+      <router-link to="/">
+        <img class="logo" src="@/assets/img/logo.svg" alt="" />
+      </router-link>
 
-        <ul class="zero">
-          <li v-if="currentUser && reqComplete && profile.isInACompany.name == ''">
-            <router-link to="/company/make">
-              Create
-            </router-link>
-          </li>
-        </ul>
+      <router-link v-if="currentUser" to="/profile">
+        <img src="@/assets/img/user.svg" alt="" />
+        @{{ currentUser.username }}
+      </router-link>
 
-        <ul v-if="!currentUser" class="zero">
-          <li>
-            <router-link to="/register">
-              Sign Up
-            </router-link>
-          </li>
-          <li>
-            <router-link to="/login">
-              Login
-            </router-link>
-          </li>
-        </ul>
+      <router-link v-if="currentUser" to="/hacktivity">
+        <img src="@/assets/img/user.svg" alt="" />
+        Hacktivity
+      </router-link>
 
-        <ul v-if="currentUser" class="zero">
-          <li>
-            <router-link to="/profile">
-              {{ currentUser.username }}
-            </router-link>
-          </li>
-          <li>
-            <a href @click.prevent="logOut">
-              Logout
-            </a>
-          </li>
+      <router-link v-if="currentUser" to="/dashboard">
+        <img src="@/assets/img/user.svg" alt="" />
+        Dashboard
+      </router-link>
 
-          <li v-if="reqComplete && !profile.isInACompany.name == ''">
-            <router-link to="/company/dashboard">
-              {{ profile.isInACompany.name }}
-            </router-link>
-          </li>
-        </ul>
-      </div>
+      <router-link
+        v-if="currentUser && reqComplete && !profile.isInACompany.isIn"
+        to="/company/make"
+      >
+        <img src="@/assets/img/user.svg" alt="" />
+        Create
+      </router-link>
+
+      <router-link v-if="!currentUser" to="/register">
+        <img src="@/assets/img/user.svg" alt="" />
+        Sign Up
+      </router-link>
+
+      <router-link v-if="!currentUser" to="/login">
+        <img src="@/assets/img/user.svg" alt="" />
+        Login
+      </router-link>
+
+      <router-link
+        v-if="currentUser && reqComplete && profile.isInACompany.isIn"
+        to="/company/dashboard"
+      >
+        <img src="@/assets/img/user.svg" alt="" />
+        {{ profile.isInACompany.cname }}
+      </router-link>
+
+      <a v-if="currentUser" href @click.prevent="logOut">
+        <img src="@/assets/img/user.svg" alt="" />
+        Logout
+      </a>
     </div>
   </nav>
 </template>
@@ -77,50 +69,70 @@ export default {
       reqComplete: false,
     }
   },
-  mounted() {
-    UserService.getProfile().then(
-      (response) => {
-        this.profile = response.data
-        this.reqComplete = true
-      },
-      (error) => {
-        this.profile =
-          (error.response &&
-            error.response.data &&
-            error.response.data.message) ||
-          error.message ||
-          error.toString()
-      },
-    )
-  },
   methods: {
     logOut() {
       this.$store.dispatch('auth/logout')
       this.$router.push('/login')
     },
+    getProfileData() {
+      UserService.getProfile().then(
+        (response) => {
+          this.profile = response.data
+          this.reqComplete = true
+        },
+        (error) => {
+          this.profile =
+            (error.response &&
+              error.response.data &&
+              error.response.data.message) ||
+            error.message ||
+            error.toString()
+        },
+      )
+    },
+  },
+  mounted() {
+    this.getProfileData()
   },
 }
 </script>
 
-<style scoped>
-nav {
-  background-color: rgb(25, 25, 25);
-}
+<style lang="scss" scoped>
 .nav {
   display: flex;
-  /* align-items: center;
   justify-content: space-around;
-  text-align: center; */
-  /* font-size: 22px; */
+  align-items: center;
+  height: 100%;
+  text-align: center;
+  p {
+    margin: 0;
+  }
+  img {
+		width: 50%;
+		display: none;
+  }
+  a {
+    img {
+      margin-bottom: 0.1em;
+    }
+		color: #fff;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		flex-direction: column;
+  }
+  a:hover {
+    color: #007fef;
+  }
 }
 
-/* nav a {
-  color: #00d6da;
-}
-nav a:hover {
-  color: #007fef;
-} */
-.nav ul {
-  display: flex;
+@media (min-width: 750px) {
+  .nav {
+		justify-content: space-around;
+		flex-direction: column;
+		img {
+			display: block;
+		}
+  }
 }
 </style>

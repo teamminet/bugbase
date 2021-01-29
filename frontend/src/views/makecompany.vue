@@ -62,6 +62,8 @@ export default {
         (response) => {
           this.res = response.data
           this.submitted = true
+          window.location.href = '/company/dashboard'
+          // this.$router.push('/company/dashboard')
         },
         (error) => {
           this.res =

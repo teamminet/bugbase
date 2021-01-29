@@ -1,6 +1,6 @@
 <template>
   <div>
-    <Navbar />
+    <!-- <Navbar /> -->
     <main>
       <router-view />
     </main>
@@ -8,14 +8,14 @@
 </template>
 
 <script>
-import Navbar from '../components/navbar.vue';
+import Navbar from '../components/navbar.vue'
 
 export default {
   name: 'loggedOut',
   components: {
-    Navbar,
+    // Navbar,
   },
-};
+}
 </script>
 
 <style scoped></style>

@@ -12,11 +12,12 @@ class UserService {
   getMyCompany() {
     return axios.get(`${API_URL}/company/dashboard`, { headers: authHeader() })
   }
-  getDashboard() {
-    return axios.get(`${API_URL}/kjkj`, {
-      headers: authHeader(),
-    })
-  }
+
+  // getDashboard() {
+  //   return axios.get(`${API_URL}/kjkj`, {
+  //     headers: authHeader(),
+  //   })
+  // }
 
   getCompanyDashboard() {
     return axios.get(`${API_URL}/company/dashboard`, {
@@ -66,6 +67,32 @@ class UserService {
       `${API_URL}/company/dashboard/adduser`,
       {
         username,
+      },
+      {
+        headers: authHeader(),
+      },
+    )
+  }
+
+  //remove a member from company
+  removeUserFromCompany(username) {
+    return axios.post(
+      `${API_URL}/company/dashboard/removeuser`,
+      {
+        username,
+      },
+      {
+        headers: authHeader(),
+      },
+    )
+  }
+
+  //get member data from company
+  getCompanyMembers(cusername) {
+    return axios.post(
+      `${API_URL}/getusersofcompany`,
+      {
+        cusername,
       },
       {
         headers: authHeader(),

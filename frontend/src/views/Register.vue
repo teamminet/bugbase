@@ -1,58 +1,68 @@
 <template>
   <div class="container">
-    <div class="flex-center">
-      <div class="six columns">
-        <form name="form" @submit.prevent="handleRegister">
-          <div v-if="!successful">
-            <label for="username">Username</label>
-            <input
-              v-model="user.username"
-              v-validate="'required|min:3|max:20'"
-              type="text"
-              class="form-control"
-              name="username"
-            />
-            <div
-              v-if="submitted && errors.has('username')"
-              class="alert-danger"
-            >
-              {{ errors.first('username') }}
+    <div class="vh">
+      <div class="flex-center">
+        <div class="six columns">
+          <router-link to="/">
+            <img src="@/assets/img/bugbase.svg" alt="" class="bugbase" />
+          </router-link>
+          <h5 class="semi">Sign up</h5>
+          <form name="form" @submit.prevent="handleRegister">
+            <div v-if="!successful">
+              <label for="username">Username</label>
+              <input
+                v-model="user.username"
+                v-validate="'required|min:3|max:20'"
+                type="text"
+                class="form-control"
+                name="username"
+              />
+              <div
+                v-if="submitted && errors.has('username')"
+                class="alert-danger"
+              >
+                {{ errors.first('username') }}
+              </div>
+              <label for="email">Email</label>
+              <input
+                v-model="user.email"
+                v-validate="'required|email|max:50'"
+                type="email"
+                class="form-control"
+                name="email"
+              />
+              <div v-if="submitted && errors.has('email')" class="alert-danger">
+                {{ errors.first('email') }}
+              </div>
+              <label for="password">Password</label>
+              <input
+                v-model="user.password"
+                v-validate="'required|min:6|max:40'"
+                type="password"
+                class="form-control"
+                name="password"
+              />
+              <div
+                v-if="submitted && errors.has('password')"
+                class="alert-danger"
+              >
+                {{ errors.first('password') }}
+              </div>
+              <button>Sign Up</button>
             </div>
-            <label for="email">Email</label>
-            <input
-              v-model="user.email"
-              v-validate="'required|email|max:50'"
-              type="email"
-              class="form-control"
-              name="email"
-            />
-            <div v-if="submitted && errors.has('email')" class="alert-danger">
-              {{ errors.first('email') }}
-            </div>
-            <label for="password">Password</label>
-            <input
-              v-model="user.password"
-              v-validate="'required|min:6|max:40'"
-              type="password"
-              class="form-control"
-              name="password"
-            />
-            <div
-              v-if="submitted && errors.has('password')"
-              class="alert-danger"
-            >
-              {{ errors.first('password') }}
-            </div>
-            <button>Sign Up</button>
-          </div>
-        </form>
+          </form>
 
-        <div
-          v-if="message"
-          class="alert"
-          :class="successful ? 'alert-success' : 'alert-danger'"
-        >
-          {{ message }}
+          <h5 class="yoz">
+            <router-link to="/login">Already have an account?</router-link>
+          </h5>
+
+          <div
+            v-if="message"
+            class="alert"
+            :class="successful ? 'alert-success' : 'alert-danger'"
+          >
+            {{ message }}
+          </div>
         </div>
       </div>
     </div>
@@ -110,4 +120,20 @@ export default {
 }
 </script>
 
-<style scoped></style>
+<style lang="scss" scoped>
+.vh {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-content: center;
+  flex-direction: column;
+}
+.bugbase {
+  width: 80%;
+}
+
+.yoz {
+  margin-top: -0.75em;
+  font-size: 1.2em;
+}
+</style>

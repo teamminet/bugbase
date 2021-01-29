@@ -36,9 +36,9 @@
       <!-- <h3>{{ content }}</h3> -->
 
       <h2 class="med">Your Organisations</h2>
-      <h5 v-if="loaded && !content.isInACompany.name == ''">
+      <h5 v-if="loaded && content.isInACompany.isIn">
         <router-link to="/company/dashboard">
-          {{ content.isInACompany.name }}
+          {{ content.isInACompany.cname }}
         </router-link>
       </h5>
     </div>
