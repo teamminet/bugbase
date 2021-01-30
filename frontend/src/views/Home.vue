@@ -24,7 +24,7 @@
           <div class="ten columns">
             <div class="vid-con noselect">
               <iframe
-                src="//www.youtube.com/embed/YcaCoP7D_pk"
+                src="https://www.youtube.com/embed/D1sLduK8upU"
                 frameborder="0"
                 allowfullscreen
                 class="video"
@@ -41,55 +41,61 @@
         <div class="grid">
           <div class="one">
             <img src="@/assets/img/icon.svg" alt="icon" class="feticon" />
-            <h3 class="semi">Feature 1</h3>
+            <h3 class="semi">Bug Bounty</h3>
             <p>
-              Lorem, ipsum dolor sit amet consectetur adipisicing elit. Libero
-              aliquid expedita obcaecati soluta, assumenda vel doloribus.
+              Earn money as a secondary source of income by doing bug bounty s
+              for companies you love! Cash rewards range from hundreds to lakhs
+              of rupees.
             </p>
           </div>
 
           <div class="one">
             <img src="@/assets/img/icon.svg" alt="icon" class="feticon" />
-            <h3 class="semi">Feature 2</h3>
+            <h3 class="semi">Made In India</h3>
             <p>
-              Lorem, ipsum dolor sit amet consectetur adipisicing elit. Libero
-              aliquid expedita obcaecati soluta, assumenda vel doloribus.
+              Bug Base, is made by Indian individuals, for the Indian
+              Subcontinent aligned with the "Make In India" theme the Indian
+              government is currently promoting.
             </p>
           </div>
 
           <div class="one">
             <img src="@/assets/img/icon.svg" alt="icon" class="feticon" />
-            <h3 class="semi">Feature 3</h3>
+            <h3 class="semi">CTF Competitions</h3>
             <p>
-              Lorem, ipsum dolor sit amet consectetur adipisicing elit. Libero
-              aliquid expedita obcaecati soluta, assumenda vel doloribus.
+              Companies and Academic Institutions can host CTF events, which
+              are, time based, ethical hacking competitions among students or
+              other individuals
             </p>
           </div>
 
           <div class="one">
             <img src="@/assets/img/icon.svg" alt="icon" class="feticon" />
-            <h3 class="semi">Feature 4</h3>
+            <h3 class="semi">User Experience</h3>
             <p>
-              Lorem, ipsum dolor sit amet consectetur adipisicing elit. Libero
-              aliquid expedita obcaecati soluta, assumenda vel doloribus.
+              Our website is designed with keeping UX and UI fundamentals in
+              mind, we want to give our users a great experience using our
+              platform
             </p>
           </div>
 
           <div class="one">
             <img src="@/assets/img/icon.svg" alt="icon" class="feticon" />
-            <h3 class="semi">Feature 5</h3>
+            <h3 class="semi">Government Programs</h3>
             <p>
-              Lorem, ipsum dolor sit amet consectetur adipisicing elit. Libero
-              aliquid expedita obcaecati soluta, assumenda vel doloribus.
+              The Government of India, In collaboration with BugBase have posted
+              their websites here with a small bounty to get the critical
+              problems identified and fixed.
             </p>
           </div>
 
           <div class="one">
             <img src="@/assets/img/icon.svg" alt="icon" class="feticon" />
-            <h3 class="semi">Feature 6</h3>
+            <h3 class="semi">Single Page Application</h3>
             <p>
-              Lorem, ipsum dolor sit amet consectetur adipisicing elit. Libero
-              aliquid expedita obcaecati soluta, assumenda vel doloribus.
+              Our application is a lightning fast webapp built on VueJS with a
+              SPA Setup i.e. It speaks to a NodeJS API in the backend and
+              renders the output onto the frontend
             </p>
           </div>
         </div>
@@ -132,7 +138,7 @@
 // import UserService from '../services/user.service'
 
 export default {
-  name: 'Home',
+  name: "Home",
   // data() {
   //   return {
   //     content: '',
@@ -153,7 +159,7 @@ export default {
   //     }
   //   );
   // },
-}
+};
 </script>
 
 <style lang="scss" scoped>

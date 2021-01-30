@@ -16,7 +16,7 @@
             <h3 class="semi chattitle">Chat</h3>
 
             <div class="databro">
-              <div v-for="message in reports.chatdata.slice(1)" :key="message">
+              <div v-for="message in reports.chatdata" :key="message">
                 <div
                   class="companychat u-pull-left"
                   v-if="message.person === 1"
