@@ -8,7 +8,7 @@ Website hosted on: https://bugbase.in with Netlify
 API hosted on: https://api.bugbase.in with Heroku
 
 ## Product Branding
-https://dhruvagoyal.com/brandingforcodebreak
+https://www.behance.net/gallery/112423317/BugBase-an-Indian-Bug-Bounty-Program?share=1
 
 ## Drive Link
 The drive link contains:
